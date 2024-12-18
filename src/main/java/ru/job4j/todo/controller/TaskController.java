@@ -1,17 +1,18 @@
 package ru.job4j.todo.controller;
 
 import lombok.AllArgsConstructor;
+import org.apache.el.stream.Optional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.service.SimpleTaskService;
 
 @Controller
 @AllArgsConstructor
 @RequestMapping("/tasks")
 public class TaskController {
-    private final TaskService taskService;
+    private final SimpleTaskService taskService;
 
     @GetMapping
     public String getAll(Model model) {
@@ -20,23 +21,32 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task) {
-        taskService.create(task);
+    public String create(@ModelAttribute Task task, Model model) {
+        var savedTask = taskService.create(task);
+        if (savedTask.isEmpty()) {
+            model.addAttribute("errorMessage", "Не удалось сохранить задачу!");
+            return "errors/error";
+        }
         return "redirect:/tasks";
     }
 
     @PostMapping("/delete")
-    public String delete(@RequestParam("id") Integer id) {
-        taskService.delete(id);
+    public String delete(@RequestParam("id") Integer id, Model model) {
+        boolean isDeleted = taskService.delete(id);
+        if (!isDeleted) {
+            model.addAttribute("errorMessage", "Не удалось удалить задачу!");
+            return "errors/error";
+        }
         return "redirect:/tasks";
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task) {
-        Task existingTask = taskService.findById(task.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + task.getId()));
-        existingTask.setDone(true);
-        taskService.update(existingTask);
+    public String update(@ModelAttribute Task task, Model model) {
+        boolean isUpdated = taskService.update(task);
+        if (!isUpdated) {
+            model.addAttribute("errorMessage", "Не удалось обновить задачу!");
+            return "errors/error";
+        }
         return "redirect:/tasks";
     }
 
@@ -54,15 +64,21 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public String getTaskDetails(@PathVariable("id") Integer id, Model model) {
-        Task task = taskService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + id));
-        model.addAttribute("task", task);
+        var taskOptional = taskService.findById(id);
+        if (taskOptional.isEmpty()) {
+            return "errors/404";
+        }
+        model.addAttribute("task", taskOptional.get());
         return "tasks/details";
     }
 
     @GetMapping("/edit")
     public String editTaskForm(@RequestParam("id") Integer id, Model model) {
-        Task task = taskService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid task ID: " + id));
-        model.addAttribute("task", task);
+        var taskOptional = taskService.findById(id);
+        if (taskOptional.isEmpty()) {
+            return "errors/404";
+        }
+        model.addAttribute("task", taskOptional.get());
         return "tasks/edit";
     }
 

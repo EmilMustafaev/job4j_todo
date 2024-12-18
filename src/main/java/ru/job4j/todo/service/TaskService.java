@@ -1,43 +1,23 @@
 package ru.job4j.todo.service;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.store.TaskStore;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@AllArgsConstructor
-public class TaskService {
-    private final TaskStore taskStore;
+public interface TaskService {
+    List<Task> findAll();
 
-    public List<Task> findAll() {
-        return taskStore.findAll();
-    }
+    Optional<Task> create(Task task);
 
-    public Task create(Task task) {
-        return taskStore.create(task);
-    }
+    boolean delete(Integer id);
 
-    public void delete(Integer id) {
-        taskStore.delete(id);
-    }
+    boolean update(Task task);
 
-    public void update(Task task) {
-        taskStore.update(task);
-    }
+    List<Task> findCompleted();
 
-    public List<Task> findCompleted() {
-        return taskStore.findCompleted();
-    }
+    List<Task> findNew();
 
-    public List<Task> findNew() {
-        return taskStore.findNew();
-    }
+    Optional<Task> findById(Integer id);
 
-    public Optional<Task> findById(Integer id) {
-        return taskStore.findById(id);
-    }
 }

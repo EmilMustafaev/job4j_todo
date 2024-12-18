@@ -16,8 +16,11 @@ Spring Boot, Thymeleaf, Hibernate, PostgreSQL и Bootstrap.
 - **Сборка:** Maven
 - **Миграции:** Liquibase
 
+## **Запуск приложения**
+- Запустить метод main из класса Main находящийся по пути src/main/java/ru.job4j.todo/Main.
+
 ## **Скриншоты**
-Добавьте здесь изображения запущенного приложения (список задач, формы и т.д.).
+
 ### Главная страница
 ![Главная страница](images/img.png)
 

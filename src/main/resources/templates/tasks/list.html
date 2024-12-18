@@ -4,37 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todo List</title>
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-
 <div class="container mt-5">
     <h1 class="text-center mb-4">Todo List</h1>
 
-    <!-- Навигационные ссылки -->
+    <!-- Сообщение об ошибке -->
+    <div th:if="${errorMessage}" class="alert alert-danger text-center">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- Сообщение об успешном выполнении -->
+    <div th:if="${successMessage}" class="alert alert-success text-center">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <!-- Навигация -->
     <div class="mb-3 text-center">
-        <a th:href="@{/tasks}" class="btn btn-primary btn-sm mx-2">Все</a>
-        <a th:href="@{/tasks/completed}" class="btn btn-success btn-sm mx-2">Выполненные</a>
-        <a th:href="@{/tasks/new}" class="btn btn-warning btn-sm mx-2">Новые</a>
+        <a th:href="@{/tasks}" class="btn btn-primary">Все</a>
+        <a th:href="@{/tasks/completed}" class="btn btn-success">Выполненные</a>
+        <a th:href="@{/tasks/new}" class="btn btn-warning">Новые</a>
     </div>
 
     <!-- Форма для добавления новой задачи -->
-    <form th:action="@{/tasks/create}" method="post" class="row g-3 mb-4">
-        <div class="col-auto">
-            <input type="text" class="form-control" name="description" placeholder="Добавить задачу" required>
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-dark">Добавить задание</button>
+    <form th:action="@{/tasks/create}" method="post" class="mb-4">
+        <div class="row">
+            <div class="col">
+                <input type="text" name="title" placeholder="Название задачи" class="form-control" required>
+            </div>
+            <div class="col">
+                <input type="text" name="description" placeholder="Описание задачи" class="form-control" required>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-dark">Добавить задачу</button>
+            </div>
         </div>
     </form>
 
-    <!-- Таблица с задачами -->
-    <table class="table table-striped table-bordered text-center align-middle">
+    <!-- Таблица задач -->
+    <table class="table table-bordered table-hover">
         <thead class="table-dark">
         <tr>
             <th>ID</th>
+            <th>Название</th>
             <th>Описание</th>
             <th>Дата создания</th>
             <th>Состояние</th>
@@ -43,35 +56,31 @@
         </thead>
         <tbody>
         <tr th:each="task : ${tasks}">
-            <td th:text="${task.id}">1</td>
+            <td th:text="${task.id}"></td>
             <td>
-                <a th:href="@{/tasks/{id}(id=${task.id})}" th:text="${task.description}" class="text-decoration-none"></a>
+                <a th:href="@{/tasks/{id}(id=${task.id})}" th:text="${task.title}"></a>
             </td>
-            <td th:text="${task.created}">2024-06-17</td>
+            <td th:text="${task.description}"></td>
+            <td th:text="${task.created}"></td>
+            <td th:text="${task.done ? 'Выполнено' : 'Новое'}"></td>
             <td>
-                <span th:text="${task.done ? 'Выполнено' : 'Новое'}"
-                      th:class="${task.done} ? 'text-success' : 'text-danger'"></span>
-            </td>
-            <td>
-                <!-- Кнопка "Удалить" -->
                 <form th:action="@{/tasks/delete}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${task.id}"/>
-                    <button type="submit" class="btn btn-outline-danger btn-sm">Удалить</button>
+                    <input type="hidden" name="id" th:value="${task.id}">
+                    <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
                 </form>
-
-                <!-- Кнопка "Выполнить" -->
                 <form th:action="@{/tasks/update}" method="post" style="display:inline;">
-                    <input type="hidden" name="id" th:value="${task.id}"/>
-                    <input type="hidden" name="done" value="true"/>
-                    <button type="submit" class="btn btn-outline-success btn-sm">Выполнить</button>
+                    <input type="hidden" name="id" th:value="${task.id}">
+                    <input type="hidden" name="title" th:value="${task.title}">
+                    <input type="hidden" name="description" th:value="${task.description}">
+                    <input type="hidden" name="done" value="true">
+                    <button type="submit" class="btn btn-success btn-sm">Выполнить</button>
                 </form>
+                <a th:href="@{/tasks/edit(id=${task.id})}" class="btn btn-primary btn-sm">Редактировать</a>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
-
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
