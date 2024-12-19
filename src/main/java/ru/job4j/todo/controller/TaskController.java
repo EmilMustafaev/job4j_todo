@@ -1,12 +1,11 @@
 package ru.job4j.todo.controller;
 
 import lombok.AllArgsConstructor;
-import org.apache.el.stream.Optional;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.service.SimpleTaskService;
+import ru.job4j.todo.service.task.SimpleTaskService;
 
 @Controller
 @AllArgsConstructor
@@ -42,7 +41,7 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(@ModelAttribute Task task, Model model) {
-        boolean isUpdated = taskService.update(task);
+        boolean isUpdated = taskService.updateDone(task);
         if (!isUpdated) {
             model.addAttribute("errorMessage", "Не удалось обновить задачу!");
             return "errors/error";
@@ -83,8 +82,12 @@ public class TaskController {
     }
 
     @PostMapping("/edit")
-    public String editTask(@ModelAttribute Task task) {
-        taskService.update(task);
+    public String editTask(@ModelAttribute Task task, Model model) {
+        boolean isUpdated = taskService.update(task);
+        if (!isUpdated) {
+            model.addAttribute("errorMessage", "Не удалось обновить задачу!");
+            return "errors/error";
+        }
         return "redirect:/tasks";
     }
 }

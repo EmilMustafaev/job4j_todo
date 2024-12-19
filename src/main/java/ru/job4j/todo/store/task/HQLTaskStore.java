@@ -1,4 +1,4 @@
-package ru.job4j.todo.store;
+package ru.job4j.todo.store.task;
 
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
@@ -96,6 +96,31 @@ public class HQLTaskStore implements TaskStore {
         }
         return isUpdated;
     }
+
+    @Override
+    public boolean updateDone(Task task) {
+        Session session = sf.openSession();
+        boolean isUpdated = false;
+        try {
+            session.beginTransaction();
+            int result = session.createQuery(
+                            "UPDATE Task SET done = :fDone WHERE id = :fId")
+                    .setParameter("fDone", task.isDone())
+                    .setParameter("fId", task.getId())
+                    .executeUpdate();
+            isUpdated = result > 0;
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            LOG.error("Не удалось обновить задачу" + e);
+        } finally {
+            session.close();
+        }
+        return isUpdated;
+    }
+
+
+
 
     @Override
     public List<Task> findCompleted() {

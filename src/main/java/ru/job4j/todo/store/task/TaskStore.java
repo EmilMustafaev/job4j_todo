@@ -1,4 +1,4 @@
-package ru.job4j.todo.store;
+package ru.job4j.todo.store.task;
 
 import ru.job4j.todo.model.Task;
 
@@ -13,6 +13,8 @@ public interface TaskStore {
     boolean delete(Integer id);
 
     boolean update(Task task);
+
+    boolean updateDone(Task task);
 
     List<Task> findCompleted();
 
