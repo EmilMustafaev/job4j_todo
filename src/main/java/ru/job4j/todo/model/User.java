@@ -1,35 +1,27 @@
 package ru.job4j.todo.model;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "tasks")
+@Table(name = "users")
 @Getter
 @Setter
-public class Task {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-
     private Integer id;
 
+    private String name;
 
-    private String title;
+    private String login;
 
+    private String password;
 
-    private String description;
-
-    @Column(name = "created", nullable = false, updatable = false)
-
-    private LocalDateTime created = LocalDateTime.now();
-
-
-    private boolean done;
 }
