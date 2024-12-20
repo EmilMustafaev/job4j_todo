@@ -58,6 +58,7 @@
             <th>Дата создания</th>
             <th>Состояние</th>
             <th>Действия</th>
+            <th>Пользователь</th>
         </tr>
         </thead>
         <tbody>
@@ -83,6 +84,7 @@
                 </form>
                 <a th:href="@{/tasks/edit(id=${task.id})}" class="btn btn-primary btn-sm">Редактировать</a>
             </td>
+            <td th:text="${task.user.name}"></td>
         </tr>
         </tbody>
     </table>

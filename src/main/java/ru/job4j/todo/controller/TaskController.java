@@ -5,7 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.task.SimpleTaskService;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 @AllArgsConstructor
@@ -14,13 +17,24 @@ public class TaskController {
     private final SimpleTaskService taskService;
 
     @GetMapping
-    public String getAll(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
+    public String getAll(Model model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            model.addAttribute("errorMessage", "Вы должны быть авторизованы для просмотра задач!");
+            return "errors/error";
+        }
+        model.addAttribute("tasks", taskService.findAll(currentUser));
         return "tasks/list";
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, Model model) {
+    public String create(@ModelAttribute Task task, HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            model.addAttribute("errorMessage", "Вы должны быть авторизованы для создания задачи!");
+            return "errors/error";
+        }
+        task.setUser(currentUser);
         var savedTask = taskService.create(task);
         if (savedTask.isEmpty()) {
             model.addAttribute("errorMessage", "Не удалось сохранить задачу!");
@@ -50,14 +64,24 @@ public class TaskController {
     }
 
     @GetMapping("/completed")
-    public String getCompleted(Model model) {
-        model.addAttribute("tasks", taskService.findCompleted());
+    public String getCompleted(Model model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            model.addAttribute("errorMessage", "Вы должны быть авторизованы для просмотра задач!");
+            return "errors/error";
+        }
+        model.addAttribute("tasks", taskService.findCompleted(currentUser));
         return "tasks/list";
     }
 
     @GetMapping("/new")
-    public String getNew(Model model) {
-        model.addAttribute("tasks", taskService.findNew());
+    public String getNew(Model model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser == null) {
+            model.addAttribute("errorMessage", "Вы должны быть авторизованы для просмотра задач!");
+            return "errors/error";
+        }
+        model.addAttribute("tasks", taskService.findNew(currentUser));
         return "tasks/list";
     }
 

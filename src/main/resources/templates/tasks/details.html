@@ -17,6 +17,7 @@
             <p><strong>Описание:</strong> <span th:text="${task.description}"></span></p>
             <p><strong>Дата создания:</strong> <span th:text="${task.created}"></span></p>
             <p><strong>Статус:</strong> <span th:text="${task.done ? 'Выполнено' : 'Новое'}"></span></p>
+            <p><strong>Пользователь:</strong> <span th:text="${task.user.name}"></span></p>
         </div>
         <div class="card-footer">
             <a th:href="@{/tasks}" class="btn btn-secondary">Назад</a>

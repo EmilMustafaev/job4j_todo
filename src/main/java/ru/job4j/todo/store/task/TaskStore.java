@@ -1,12 +1,13 @@
 package ru.job4j.todo.store.task;
 
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface TaskStore {
-    List<Task> findAll();
+    List<Task> findAll(User user);
 
     Optional<Task> create(Task task);
 
@@ -16,9 +17,9 @@ public interface TaskStore {
 
     boolean updateDone(Task task);
 
-    List<Task> findCompleted();
+    List<Task> findCompleted(User user);
 
-    List<Task> findNew();
+    List<Task> findNew(User user);
 
     Optional<Task> findById(Integer id);
 

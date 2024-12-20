@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
+import ru.job4j.todo.model.User;
 import ru.job4j.todo.store.CrudStore;
 
 import java.util.ArrayList;
@@ -21,8 +22,12 @@ public class HQLTaskStore implements TaskStore {
     private final CrudStore crudStore;
 
     @Override
-    public List<Task> findAll() {
-        return crudStore.query("FROM Task", Task.class);
+    public List<Task> findAll(User user) {
+        return crudStore.query(
+                "FROM Task WHERE user = :user",
+                Task.class,
+                Map.of("user", user)
+        );
     }
 
     @Override
@@ -68,18 +73,20 @@ public class HQLTaskStore implements TaskStore {
     }
 
     @Override
-    public List<Task> findCompleted() {
+    public List<Task> findCompleted(User user) {
         return crudStore.query(
-                "FROM Task WHERE done = true",
-                Task.class
+                "FROM Task WHERE done = true AND user = :user",
+                Task.class,
+                Map.of("user", user)
         );
     }
 
     @Override
-    public List<Task> findNew() {
+    public List<Task> findNew(User user) {
         return crudStore.query(
-                "FROM Task WHERE done = false",
-                Task.class
+                "FROM Task WHERE done = false AND user = :user",
+                Task.class,
+                Map.of("user", user)
         );
     }
 
