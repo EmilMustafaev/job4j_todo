@@ -19,11 +19,17 @@ import java.util.Optional;
 public class HQLUserStore implements UserStore {
 
     private final CrudStore crudStore;
+    private static final Logger LOG = LoggerFactory.getLogger(HQLUserStore.class.getName());
 
     @Override
     public Optional<User> save(User user) {
-        crudStore.run(session -> session.persist(user));
-        return Optional.of(user);
+        try {
+            crudStore.run(session -> session.persist(user));
+            return Optional.of(user);
+        } catch (Exception e) {
+            LOG.error(("Ошибка при сохранении пользователя: " + e.getMessage()));
+            return Optional.empty();
+        }
     }
 
     @Override
