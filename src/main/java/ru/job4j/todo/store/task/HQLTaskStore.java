@@ -24,7 +24,7 @@ public class HQLTaskStore implements TaskStore {
     @Override
     public List<Task> findAll(User user) {
         return crudStore.query(
-                "FROM Task WHERE user = :user",
+                "FROM Task t JOIN FETCH t.priority WHERE t.user = :user",
                 Task.class,
                 Map.of("user", user)
         );
@@ -75,7 +75,7 @@ public class HQLTaskStore implements TaskStore {
     @Override
     public List<Task> findCompleted(User user) {
         return crudStore.query(
-                "FROM Task WHERE done = true AND user = :user",
+                "FROM Task t JOIN FETCH t.priority WHERE t.done = true AND t.user = :user",
                 Task.class,
                 Map.of("user", user)
         );
@@ -84,7 +84,7 @@ public class HQLTaskStore implements TaskStore {
     @Override
     public List<Task> findNew(User user) {
         return crudStore.query(
-                "FROM Task WHERE done = false AND user = :user",
+                "FROM Task t JOIN FETCH t.priority  WHERE t.done = false AND t.user = :user",
                 Task.class,
                 Map.of("user", user)
         );

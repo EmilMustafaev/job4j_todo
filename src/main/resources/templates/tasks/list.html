@@ -35,14 +35,21 @@
 
     <!-- Форма для добавления новой задачи -->
     <form th:action="@{/tasks/create}" method="post" class="mb-4">
-        <div class="row">
-            <div class="col">
+        <div class="row g-2 align-items-center">
+            <div class="col-md-4">
                 <input type="text" name="title" placeholder="Название задачи" class="form-control" required>
             </div>
-            <div class="col">
+            <div class="col-md-4">
                 <input type="text" name="description" placeholder="Описание задачи" class="form-control" required>
             </div>
-            <div class="col-auto">
+            <div class="col-md-2">
+                <select name="priority.id" class="form-select" required>
+                    <option value="" disabled selected>Выберите приоритет</option>
+                    <option value="1">Срочно</option>
+                    <option value="2">Нормально</option>
+                </select>
+            </div>
+            <div class="col-md-auto">
                 <button type="submit" class="btn btn-dark">Добавить задачу</button>
             </div>
         </div>
@@ -59,6 +66,7 @@
             <th>Состояние</th>
             <th>Действия</th>
             <th>Пользователь</th>
+            <th>Приоритет</th>
         </tr>
         </thead>
         <tbody>
@@ -85,6 +93,7 @@
                 <a th:href="@{/tasks/edit(id=${task.id})}" class="btn btn-primary btn-sm">Редактировать</a>
             </td>
             <td th:text="${task.user.name}"></td>
+            <td th:text="${task.priority.name}"></td>
         </tr>
         </tbody>
     </table>
