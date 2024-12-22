@@ -4,17 +4,22 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.priority.PriorityService;
 import ru.job4j.todo.service.task.SimpleTaskService;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @AllArgsConstructor
 @RequestMapping("/tasks")
 public class TaskController {
     private final SimpleTaskService taskService;
+
+    private final PriorityService priorityService;
 
     @GetMapping
     public String getAll(Model model, HttpSession session) {
@@ -23,6 +28,8 @@ public class TaskController {
             model.addAttribute("errorMessage", "Вы должны быть авторизованы для просмотра задач!");
             return "errors/error";
         }
+        List<Priority> priorities = priorityService.findAll();
+        model.addAttribute("priorities", priorities);
         model.addAttribute("tasks", taskService.findAll(currentUser));
         return "tasks/list";
     }

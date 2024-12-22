@@ -45,8 +45,10 @@
             <div class="col-md-2">
                 <select name="priority.id" class="form-select" required>
                     <option value="" disabled selected>Выберите приоритет</option>
-                    <option value="1">Срочно</option>
-                    <option value="2">Нормально</option>
+                    <option th:each="priority : ${priorities}"
+                            th:value="${priority.id}"
+                            th:text="${priority.name}">
+                    </option>
                 </select>
             </div>
             <div class="col-md-auto">
