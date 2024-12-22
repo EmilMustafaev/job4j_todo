@@ -51,6 +51,13 @@
                     </option>
                 </select>
             </div>
+            <div class="col-md-6">
+                <label>Выберите категории:</label>
+                <div th:each="category : ${categories}" class="form-check">
+                    <input type="checkbox" name="categoryIds" th:value="${category.id}" class="form-check-input" th:id="'category_' + ${category.id}">
+                    <label th:for="'category_' + ${category.id}" class="form-check-label" th:text="${category.name}"></label>
+                </div>
+            </div>
             <div class="col-md-auto">
                 <button type="submit" class="btn btn-dark">Добавить задачу</button>
             </div>
@@ -69,6 +76,7 @@
             <th>Действия</th>
             <th>Пользователь</th>
             <th>Приоритет</th>
+            <th>Категории</th>
         </tr>
         </thead>
         <tbody>
@@ -96,6 +104,11 @@
             </td>
             <td th:text="${task.user.name}"></td>
             <td th:text="${task.priority.name}"></td>
+            <td>
+                <ul>
+                    <li th:each="category : ${task.categories}" th:text="${category.name}"></li>
+                </ul>
+            </td>
         </tr>
         </tbody>
     </table>

@@ -24,7 +24,13 @@ public class HQLTaskStore implements TaskStore {
     @Override
     public List<Task> findAll(User user) {
         return crudStore.query(
-                "FROM Task t JOIN FETCH t.priority WHERE t.user = :user",
+                "SELECT DISTINCT t FROM Task t "
+                        +
+                        "LEFT JOIN FETCH t.priority "
+                        +
+                        "LEFT JOIN FETCH t.categories "
+                        +
+                        "WHERE t.user = :user",
                 Task.class,
                 Map.of("user", user)
         );
@@ -75,7 +81,13 @@ public class HQLTaskStore implements TaskStore {
     @Override
     public List<Task> findCompleted(User user) {
         return crudStore.query(
-                "FROM Task t JOIN FETCH t.priority WHERE t.done = true AND t.user = :user",
+                "SELECT DISTINCT t FROM Task t "
+                        +
+                        "LEFT JOIN FETCH t.priority "
+                        +
+                        "LEFT JOIN FETCH t.categories "
+                        +
+                        "WHERE t.done = true AND t.user = :user",
                 Task.class,
                 Map.of("user", user)
         );
@@ -84,7 +96,13 @@ public class HQLTaskStore implements TaskStore {
     @Override
     public List<Task> findNew(User user) {
         return crudStore.query(
-                "FROM Task t JOIN FETCH t.priority  WHERE t.done = false AND t.user = :user",
+                "SELECT DISTINCT t FROM Task t "
+                        +
+                        "LEFT JOIN FETCH t.priority "
+                        +
+                        "LEFT JOIN FETCH t.categories "
+                        +
+                        "WHERE t.done = false AND t.user = :user",
                 Task.class,
                 Map.of("user", user)
         );
@@ -93,7 +111,13 @@ public class HQLTaskStore implements TaskStore {
     @Override
     public Optional<Task> findById(Integer id) {
         return crudStore.optional(
-                "FROM Task WHERE id = :id",
+                "SELECT DISTINCT t FROM Task t "
+                        +
+                        "LEFT JOIN FETCH t.priority "
+                        +
+                        "LEFT JOIN FETCH t.categories "
+                        +
+                        "WHERE t.id = :id",
                 Task.class,
                 Map.of("id", id)
         );

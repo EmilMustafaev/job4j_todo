@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.category.CategoryService;
+import ru.job4j.todo.service.category.SimpleCategoryService;
 import ru.job4j.todo.service.priority.PriorityService;
 import ru.job4j.todo.service.task.SimpleTaskService;
 
@@ -21,6 +24,8 @@ public class TaskController {
 
     private final PriorityService priorityService;
 
+    private final CategoryService categoryService;
+
     @GetMapping
     public String getAll(Model model, HttpSession session) {
         User currentUser = (User) session.getAttribute("user");
@@ -29,19 +34,31 @@ public class TaskController {
             return "errors/error";
         }
         List<Priority> priorities = priorityService.findAll();
+        List<Category> categories = categoryService.findAll();
         model.addAttribute("priorities", priorities);
+        model.addAttribute("categories", categories);
         model.addAttribute("tasks", taskService.findAll(currentUser));
         return "tasks/list";
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, HttpSession session, Model model) {
+    public String create(@ModelAttribute Task task,
+                         @RequestParam("categoryIds") List<Integer> categoryIds,
+                         HttpSession session,
+                         Model model) {
         User currentUser = (User) session.getAttribute("user");
         if (currentUser == null) {
             model.addAttribute("errorMessage", "Вы должны быть авторизованы для создания задачи!");
             return "errors/error";
         }
         task.setUser(currentUser);
+
+        List<Category> categories = categoryService.findAll()
+                .stream()
+                .filter(category -> categoryIds.contains(category.getId()))
+                .toList();
+        task.setCategories(categories);
+
         var savedTask = taskService.create(task);
         if (savedTask.isEmpty()) {
             model.addAttribute("errorMessage", "Не удалось сохранить задачу!");
