@@ -28,8 +28,8 @@ public class HQLUserStore implements UserStore {
             return Optional.of(user);
         } catch (Exception e) {
             LOG.error(("Ошибка при сохранении пользователя: " + e.getMessage()));
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     @Override
