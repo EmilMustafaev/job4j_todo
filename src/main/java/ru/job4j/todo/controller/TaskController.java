@@ -53,10 +53,7 @@ public class TaskController {
         }
         task.setUser(currentUser);
 
-        List<Category> categories = categoryService.findAll()
-                .stream()
-                .filter(category -> categoryIds.contains(category.getId()))
-                .toList();
+        List<Category> categories = categoryService.findByIds(categoryIds);
         task.setCategories(categories);
 
         var savedTask = taskService.create(task);

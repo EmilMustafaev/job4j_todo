@@ -17,4 +17,6 @@ public interface CategoryStore {
 
     boolean delete(Integer id);
 
+    List<Category> findByIds(List<Integer> ids);
+
 }

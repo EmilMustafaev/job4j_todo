@@ -38,4 +38,9 @@ public class SimpleCategoryService implements CategoryService {
     public boolean delete(Integer id) {
         return categoryStore.delete(id);
     }
+
+    @Override
+    public List<Category> findByIds(List<Integer> ids) {
+        return categoryStore.findByIds(ids);
+    }
 }

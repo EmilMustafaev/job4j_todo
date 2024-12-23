@@ -15,4 +15,6 @@ public interface CategoryService {
     boolean update(Category priority);
 
     boolean delete(Integer id);
+
+    List<Category> findByIds(List<Integer> ids);
 }

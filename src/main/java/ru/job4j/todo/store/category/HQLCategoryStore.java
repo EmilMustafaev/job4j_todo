@@ -17,6 +17,15 @@ public class HQLCategoryStore implements CategoryStore {
     private final CrudStore crudStore;
 
     @Override
+    public List<Category> findByIds(List<Integer> ids) {
+        return crudStore.query(
+                "FROM Category c WHERE c.id IN (:ids)",
+                Category.class,
+                Map.of("ids", ids)
+        );
+    }
+
+    @Override
     public List<Category> findAll() {
         return crudStore.query("FROM Category", Category.class);
     }
