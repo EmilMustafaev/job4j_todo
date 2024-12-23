@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +30,7 @@ public class Task {
     private String description;
 
     @Column(name = "created", nullable = false, updatable = false)
-
-    private LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created = LocalDateTime.now(ZoneOffset.UTC);
 
 
     private boolean done;

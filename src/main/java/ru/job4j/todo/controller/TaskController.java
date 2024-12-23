@@ -14,6 +14,7 @@ import ru.job4j.todo.service.priority.PriorityService;
 import ru.job4j.todo.service.task.SimpleTaskService;
 
 import javax.servlet.http.HttpSession;
+import java.time.ZoneId;
 import java.util.List;
 
 @Controller
@@ -33,6 +34,20 @@ public class TaskController {
             model.addAttribute("errorMessage", "Вы должны быть авторизованы для просмотра задач!");
             return "errors/error";
         }
+        String userTimezone = currentUser.getTimezone();
+        ZoneId zoneId = (userTimezone != null && !userTimezone.isBlank())
+                ? ZoneId.of(userTimezone)
+                : ZoneId.of("UTC");
+
+        List<Task> tasks = taskService.findAll(currentUser).stream()
+                .peek(task -> task.setCreated(
+                        task.getCreated()
+                                .atZone(ZoneId.of("UTC"))
+                                .withZoneSameInstant(zoneId)
+                                .toLocalDateTime()
+                ))
+                .toList();
+
         List<Priority> priorities = priorityService.findAll();
         List<Category> categories = categoryService.findAll();
         model.addAttribute("priorities", priorities);
@@ -91,6 +106,20 @@ public class TaskController {
             model.addAttribute("errorMessage", "Вы должны быть авторизованы для просмотра задач!");
             return "errors/error";
         }
+        String userTimezone = currentUser.getTimezone();
+        ZoneId zoneId = (userTimezone != null && !userTimezone.isBlank())
+                ? ZoneId.of(userTimezone)
+                : ZoneId.of("UTC");
+
+        List<Task> tasks = taskService.findCompleted(currentUser).stream()
+                .peek(task -> task.setCreated(
+                        task.getCreated()
+                                .atZone(ZoneId.of("UTC"))
+                                .withZoneSameInstant(zoneId)
+                                .toLocalDateTime()
+                ))
+                .toList();
+
         model.addAttribute("tasks", taskService.findCompleted(currentUser));
         return "tasks/list";
     }
@@ -102,6 +131,19 @@ public class TaskController {
             model.addAttribute("errorMessage", "Вы должны быть авторизованы для просмотра задач!");
             return "errors/error";
         }
+        String userTimezone = currentUser.getTimezone();
+        ZoneId zoneId = (userTimezone != null && !userTimezone.isBlank())
+                ? ZoneId.of(userTimezone)
+                : ZoneId.of("UTC");
+
+        List<Task> tasks = taskService.findCompleted(currentUser).stream()
+                .peek(task -> task.setCreated(
+                        task.getCreated()
+                                .atZone(ZoneId.of("UTC"))
+                                .withZoneSameInstant(zoneId)
+                                .toLocalDateTime()
+                ))
+                .toList();
         model.addAttribute("tasks", taskService.findNew(currentUser));
         return "tasks/list";
     }

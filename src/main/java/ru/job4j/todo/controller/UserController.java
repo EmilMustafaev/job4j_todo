@@ -12,6 +12,9 @@ import ru.job4j.todo.service.user.SimpleUserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TimeZone;
 
 @Controller
 @AllArgsConstructor
@@ -21,7 +24,9 @@ public class UserController {
     private final SimpleUserService userService;
 
     @GetMapping("/register")
-    public String getRegistrationPage() {
+    public String getRegistrationPage(Model model) {
+        List<String> timezones = Arrays.asList(TimeZone.getAvailableIDs());
+        model.addAttribute("timezones", timezones);
         return "users/register";
     }
 
