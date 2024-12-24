@@ -9,7 +9,6 @@ import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.category.CategoryService;
-import ru.job4j.todo.service.category.SimpleCategoryService;
 import ru.job4j.todo.service.priority.PriorityService;
 import ru.job4j.todo.service.task.SimpleTaskService;
 
@@ -34,25 +33,15 @@ public class TaskController {
             model.addAttribute("errorMessage", "Вы должны быть авторизованы для просмотра задач!");
             return "errors/error";
         }
-        String userTimezone = currentUser.getTimezone();
-        ZoneId zoneId = (userTimezone != null && !userTimezone.isBlank())
-                ? ZoneId.of(userTimezone)
-                : ZoneId.of("UTC");
 
-        List<Task> tasks = taskService.findAll(currentUser).stream()
-                .peek(task -> task.setCreated(
-                        task.getCreated()
-                                .atZone(ZoneId.of("UTC"))
-                                .withZoneSameInstant(zoneId)
-                                .toLocalDateTime()
-                ))
-                .toList();
+
+        List<Task> tasks = adjustTaskTimes(taskService.findAll(currentUser), currentUser);
 
         List<Priority> priorities = priorityService.findAll();
         List<Category> categories = categoryService.findAll();
         model.addAttribute("priorities", priorities);
         model.addAttribute("categories", categories);
-        model.addAttribute("tasks", taskService.findAll(currentUser));
+        model.addAttribute("tasks", tasks);
         return "tasks/list";
     }
 
@@ -106,21 +95,8 @@ public class TaskController {
             model.addAttribute("errorMessage", "Вы должны быть авторизованы для просмотра задач!");
             return "errors/error";
         }
-        String userTimezone = currentUser.getTimezone();
-        ZoneId zoneId = (userTimezone != null && !userTimezone.isBlank())
-                ? ZoneId.of(userTimezone)
-                : ZoneId.of("UTC");
-
-        List<Task> tasks = taskService.findCompleted(currentUser).stream()
-                .peek(task -> task.setCreated(
-                        task.getCreated()
-                                .atZone(ZoneId.of("UTC"))
-                                .withZoneSameInstant(zoneId)
-                                .toLocalDateTime()
-                ))
-                .toList();
-
-        model.addAttribute("tasks", taskService.findCompleted(currentUser));
+        List<Task> tasks = adjustTaskTimes(taskService.findCompleted(currentUser), currentUser);
+        model.addAttribute("tasks", tasks);
         return "tasks/list";
     }
 
@@ -131,20 +107,9 @@ public class TaskController {
             model.addAttribute("errorMessage", "Вы должны быть авторизованы для просмотра задач!");
             return "errors/error";
         }
-        String userTimezone = currentUser.getTimezone();
-        ZoneId zoneId = (userTimezone != null && !userTimezone.isBlank())
-                ? ZoneId.of(userTimezone)
-                : ZoneId.of("UTC");
 
-        List<Task> tasks = taskService.findCompleted(currentUser).stream()
-                .peek(task -> task.setCreated(
-                        task.getCreated()
-                                .atZone(ZoneId.of("UTC"))
-                                .withZoneSameInstant(zoneId)
-                                .toLocalDateTime()
-                ))
-                .toList();
-        model.addAttribute("tasks", taskService.findNew(currentUser));
+        List<Task> tasks = adjustTaskTimes(taskService.findNew(currentUser), currentUser);
+        model.addAttribute("tasks", tasks);
         return "tasks/list";
     }
 
@@ -176,6 +141,22 @@ public class TaskController {
             return "errors/error";
         }
         return "redirect:/tasks";
+    }
+
+    private List<Task> adjustTaskTimes(List<Task> tasks, User user) {
+        String userTimezone = user.getTimezone();
+        ZoneId zoneId = (userTimezone != null && !userTimezone.isBlank())
+                ? ZoneId.of(userTimezone)
+                : ZoneId.of("UTC");
+
+        return tasks.stream()
+                .peek(task -> task.setCreated(
+                        task.getCreated()
+                                .atZone(ZoneId.of("UTC"))
+                                .withZoneSameInstant(zoneId)
+                                .toLocalDateTime()
+                ))
+                .toList();
     }
 }
 
